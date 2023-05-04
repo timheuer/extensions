@@ -69,7 +69,7 @@ export class Extensions extends React.Component<
                 </Space>
                 <Divider />
                 <MsalAuthenticationTemplate
-                    interactionType={InteractionType.Popup}
+                    interactionType={InteractionType.Redirect}
                     authenticationRequest={authRequest}
                     errorComponent={ErrorComponent}
                     loadingComponent={LoadingComponent}>
