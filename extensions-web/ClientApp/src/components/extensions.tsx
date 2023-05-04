@@ -6,7 +6,7 @@ import { UploadChangeParam } from "antd/es/upload/interface";
 import { IExtension } from "../data/extension";
 import { PackageList } from "./packageList";
 import { ExtensionPackage } from "../data/extensionPackage";
-import { MsalAuthenticationResult, MsalAuthenticationTemplate } from "@azure/msal-react";
+import { MsalAuthenticationTemplate } from "@azure/msal-react";
 import { InteractionType } from "@azure/msal-browser";
 
 const { Text } = Typography;

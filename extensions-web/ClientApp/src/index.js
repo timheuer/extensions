@@ -1,7 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import React from 'react';
 import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -12,8 +10,6 @@ import { MsalProvider } from "@azure/msal-react";
 import { Configuration, PublicClientApplication } from "@azure/msal-browser";
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-const rootElement = document.getElementById('root');
-const root = createRoot(rootElement);
 const configuration: Configuration = {
     auth: {
         clientId: "89e5be33-2b1d-4752-bc07-d56ed546489f"
