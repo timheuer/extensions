@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
@@ -7,15 +8,30 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import './custom.css';
 import './gh.css';
+import { MsalProvider } from "@azure/msal-react";
+import { Configuration, PublicClientApplication } from "@azure/msal-browser";
 
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
+const configuration: Configuration = {
+    auth: {
+        clientId: "89e5be33-2b1d-4752-bc07-d56ed546489f"
+    }
+};
 
-root.render(
-  <BrowserRouter basename={baseUrl}>
-    <App />
-  </BrowserRouter>);
+const pca = new PublicClientApplication(configuration);
+const AppProvider = () => (
+    <MsalProvider instance={pca}>
+        <App />
+    </MsalProvider>
+);
+
+ReactDOM.render(
+    <BrowserRouter basename={baseUrl}>
+        <AppProvider />
+    </BrowserRouter>, document.getElementById("root")
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

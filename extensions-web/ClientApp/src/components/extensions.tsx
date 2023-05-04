@@ -6,97 +6,114 @@ import { UploadChangeParam } from "antd/es/upload/interface";
 import { IExtension } from "../data/extension";
 import { PackageList } from "./packageList";
 import { ExtensionPackage } from "../data/extensionPackage";
+import { MsalAuthenticationResult, MsalAuthenticationTemplate } from "@azure/msal-react";
+import { InteractionType } from "@azure/msal-browser";
 
 const { Text } = Typography;
+const authRequest = { scopes: ["openid", "profile"] };
+
+function ErrorComponent({ error }: { error: any }) {
+    return <p>An error occurred: {error.error?.errorMessage}</p>;
+}
+
+function LoadingComponent() {
+    return <p>Authentication in progress...</p>;
+}
 
 export class Extensions extends React.Component<
-	{},
-	{
-		extensions: ExtensionPackage[];
-		loading: boolean;
-		showPrerelease: boolean;
-		requireUploadAPIKey: boolean;
-	}
+    {},
+    {
+        extensions: ExtensionPackage[];
+        loading: boolean;
+        showPrerelease: boolean;
+        requireUploadAPIKey: boolean;
+    }
 > {
-	static displayName = Extensions.name;
+    static displayName = Extensions.name;
 
-	onChange(info: UploadChangeParam) {
-		if (info.file.status !== "uploading") {
-			console.log(info.file, info.fileList);
-		}
-		if (info.file.status === "done") {
-			message.success(`${info.file.name} file uploaded successfully`);
-		} else if (info.file.status === "error") {
-			message.error(`${info.file.name} file upload failed.`);
-		}
-	}
+    onChange(info: UploadChangeParam) {
+        if (info.file.status !== "uploading") {
+            console.log(info.file, info.fileList);
+        }
+        if (info.file.status === "done") {
+            message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === "error") {
+            message.error(`${info.file.name} file upload failed.`);
+        }
+    }
 
-	onSwitchChange = (checked: boolean) => {
-		this.setState({ showPrerelease: checked }, () => {
-			this.populateExtensions();
-		});
-	};
+    onSwitchChange = (checked: boolean) => {
+        this.setState({ showPrerelease: checked }, () => {
+            this.populateExtensions();
+        });
+    };
 
-	constructor(props: any) {
-		super(props);
-		this.state = { extensions: [], loading: true, showPrerelease: false, requireUploadAPIKey: true };
-	}
+    constructor(props: any) {
+        super(props);
+        this.state = { extensions: [], loading: true, showPrerelease: false, requireUploadAPIKey: true };
+    }
 
-	public render() {
-		return (
-			<Fragment>
-				<Space align="center" size="large">
-					{!this.state.requireUploadAPIKey && (
-						<Upload name="file" action="extension" onChange={this.onChange}>
-							<Button icon={<PlusOutlined />}>Upload Extension</Button>
-						</Upload>
-					)}
-					<Space>
-						<Text>Show pre-release</Text>
-						<Switch onChange={this.onSwitchChange} />
-					</Space>
-				</Space>
-				<Divider />
-				<PackageList datasource={this.state.extensions} />
-			</Fragment>
-		);
-	}
+    public render() {
+        return (
+            <Fragment>
+                <Space align="center" size="large">
+                    {!this.state.requireUploadAPIKey && (
+                        <Upload name="file" action="extension" onChange={this.onChange}>
+                            <Button icon={<PlusOutlined />}>Upload Extension</Button>
+                        </Upload>
+                    )}
+                    <Space>
+                        <Text>Show pre-release</Text>
+                        <Switch onChange={this.onSwitchChange} />
+                    </Space>
+                </Space>
+                <Divider />
+                <MsalAuthenticationTemplate
+                    interactionType={InteractionType.Popup}
+                    authenticationRequest={authRequest}
+                    errorComponent={ErrorComponent}
+                    loadingComponent={LoadingComponent}>
+                    <PackageList datasource={this.state.extensions} />
+                </MsalAuthenticationTemplate>
+            </Fragment>
+        );
+    }
 
-	componentDidMount(): void {
-		this.getUploadUIState();
-		this.populateExtensions();
-	}
+    componentDidMount(): void {
+        this.getUploadUIState();
+        this.populateExtensions();
+    }
 
-	async getUploadUIState() {
-		const response = await fetch("extension/RequireUploadAPIKey");
-		if (response.status === 200) {
-			const { requireUploadAPIKey } = await response.json();
-			this.setState({ requireUploadAPIKey });
-		}
-	}
+    async getUploadUIState() {
+        const response = await fetch("extension/RequireUploadAPIKey");
+        if (response.status === 200) {
+            const { requireUploadAPIKey } = await response.json();
+            this.setState({ requireUploadAPIKey });
+        }
+    }
 
-	async populateExtensions() {
-		console.log("Populating extensions");
-		this.setState({ loading: true });
+    async populateExtensions() {
+        console.log("Populating extensions");
+        this.setState({ loading: true });
 
-		const response = await fetch(`extension?prerelease=${this.state.showPrerelease}`);
-		if (response.status === 204) {
-			this.setState({ extensions: [], loading: false });
-			return;
-		}
-		type res = { identifier: string; version: string; extensions: IExtension[] };
-		const extensionResponse: [res] = await response.json();
+        const response = await fetch(`extension?prerelease=${this.state.showPrerelease}`);
+        if (response.status === 204) {
+            this.setState({ extensions: [], loading: false });
+            return;
+        }
+        type res = { identifier: string; version: string; extensions: IExtension[] };
+        const extensionResponse: [res] = await response.json();
 
-		let uniqueExtensions = extensionResponse.reduce((acc: res[], curr: res) => {
-			if (acc.find((p) => p.identifier === curr.identifier)) {
-				return acc;
-			}
-			return [...acc, curr];
-		}, []);
+        let uniqueExtensions = extensionResponse.reduce((acc: res[], curr: res) => {
+            if (acc.find((p) => p.identifier === curr.identifier)) {
+                return acc;
+            }
+            return [...acc, curr];
+        }, []);
 
-		const localExtensions = uniqueExtensions.map(
-			(p) => new ExtensionPackage(p.identifier, p.version, p.extensions)
-		);
-		this.setState({ extensions: localExtensions, loading: false });
-	}
+        const localExtensions = uniqueExtensions.map(
+            (p) => new ExtensionPackage(p.identifier, p.version, p.extensions)
+        );
+        this.setState({ extensions: localExtensions, loading: false });
+    }
 }
