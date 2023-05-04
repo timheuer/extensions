@@ -1,8 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Container } from "reactstrap";
 import { NavMenu } from "./NavMenu";
-import { Typography } from "antd";
-const { Text } = Typography;
 
 export class Layout extends Component {
 	static displayName = Layout.name;
