@@ -6,19 +6,8 @@ import { UploadChangeParam } from "antd/es/upload/interface";
 import { IExtension } from "../data/extension";
 import { PackageList } from "./packageList";
 import { ExtensionPackage } from "../data/extensionPackage";
-import { MsalAuthenticationTemplate } from "@azure/msal-react";
-import { InteractionType } from "@azure/msal-browser";
 
 const { Text } = Typography;
-const authRequest = { scopes: ["openid", "profile"] };
-
-function ErrorComponent({ error }: { error: any }) {
-    return <p>An error occurred: {error.error?.errorMessage}</p>;
-}
-
-function LoadingComponent() {
-    return <p>Authentication in progress...</p>;
-}
 
 export class Extensions extends React.Component<
     {},
