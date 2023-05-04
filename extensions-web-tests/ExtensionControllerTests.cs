@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace MyProject.Tests
         private Mock<IDatabaseService> _databaseService;
         private Mock<IWebHostEnvironment> _webHostEnvironment;
         private Mock<IPackageReader> _manifestReader;
+        private ILogger<ExtensionController> _logger;
+        private IConfiguration _configuration;
 
         [SetUp]
         public void Setup()
@@ -20,7 +23,7 @@ namespace MyProject.Tests
             _databaseService = new Mock<IDatabaseService>();
             _webHostEnvironment = new Mock<IWebHostEnvironment>();
             _manifestReader = new Mock<IPackageReader>();
-            _controller = new ExtensionController(_databaseService.Object, _webHostEnvironment.Object, _manifestReader.Object);
+            _controller = new ExtensionController(_databaseService.Object, _webHostEnvironment.Object, _manifestReader.Object, _logger, _configuration);
         }
 
         [Test]
