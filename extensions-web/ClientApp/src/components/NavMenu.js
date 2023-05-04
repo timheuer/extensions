@@ -2,10 +2,12 @@ import { Component } from "react";
 import {
     Navbar,
     NavbarBrand,
+    NavbarText,
     NavbarToggler,
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import "./NavMenu.css";
+import LoggedInAs from "./loggedInAsName";
 
 export class NavMenu extends Component {
     static displayName = NavMenu.name;
@@ -36,6 +38,9 @@ export class NavMenu extends Component {
                     <NavbarBrand tag={Link} to="/">
                         Extension Repository
                     </NavbarBrand>
+                    <NavbarText>
+                        <LoggedInAs />
+                    </NavbarText>
                     <NavbarToggler
                         onClick={this.toggleNavbar}
                         className="mr-2"

@@ -15,9 +15,7 @@ export class Layout extends Component {
 					{this.props.children}
 				</Container>
 				<footer>
-					<a href="mailto:contact@colorcodehq.com">
-						<Text type="secondary">Contact support</Text>
-					</a>
+					MICROSOFT INTERNAL USE ONLY
 				</footer>
 			</Fragment>
 		);
