@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -16,18 +17,26 @@ const configuration: Configuration = {
     }
 };
 
-const pca = new PublicClientApplication(configuration);
-const AppProvider = () => (
-    <MsalProvider instance={pca}>
-        <App />
-    </MsalProvider>
-);
+//const pca = new PublicClientApplication(configuration);
+//const AppProvider = () => (
+//    <MsalProvider instance={pca}>
+//        <App />
+//    </MsalProvider>
+//);
 
-ReactDOM.render(
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement);
+
+root.render(
     <BrowserRouter basename={baseUrl}>
-        <AppProvider />
-    </BrowserRouter>, document.getElementById("root")
-);
+        <App />
+    </BrowserRouter>);
+
+//ReactDOM.render(
+//    <BrowserRouter basename={baseUrl}>
+//        <AppProvider />
+//    </BrowserRouter>, document.getElementById("root")
+//);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

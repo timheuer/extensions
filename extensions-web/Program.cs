@@ -1,6 +1,14 @@
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +24,21 @@ builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
 builder.Services.AddSingleton<IPackageReader, PackageReader>();
 builder.Services.AddTransient<IDatabaseService, DatabaseService>();
 
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
 // Add services to the container.
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AppUser", policy => policy.RequireAuthenticatedUser().RequireRole("Users"));
+    var appPolicy = options.GetPolicy("AppUser");
+
+    if (appPolicy is not null)
+    {
+        options.DefaultPolicy = appPolicy;
+        options.FallbackPolicy = appPolicy;
+    }
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -27,7 +49,6 @@ if (!app.Environment.IsDevelopment())
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    app.UseFileServer(new FileServerOptions { StaticFileOptions = { ServeUnknownFileTypes = true } });
 }
 
 app.UseCors(builder =>
@@ -36,6 +57,10 @@ app.UseCors(builder =>
     .AllowAnyHeader()
     .AllowAnyMethod());
 
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseRouting();

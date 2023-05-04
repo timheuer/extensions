@@ -68,13 +68,7 @@ export class Extensions extends React.Component<
                     </Space>
                 </Space>
                 <Divider />
-                <MsalAuthenticationTemplate
-                    interactionType={InteractionType.Redirect}
-                    authenticationRequest={authRequest}
-                    errorComponent={ErrorComponent}
-                    loadingComponent={LoadingComponent}>
-                    <PackageList datasource={this.state.extensions} />
-                </MsalAuthenticationTemplate>
+                <PackageList datasource={this.state.extensions} />
             </Fragment>
         );
     }
