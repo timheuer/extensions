@@ -24,21 +24,21 @@ builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
 builder.Services.AddSingleton<IPackageReader, PackageReader>();
 builder.Services.AddTransient<IDatabaseService, DatabaseService>();
 
-//builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 ////Add services to the container.
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.AddPolicy("AppUser", policy => policy.RequireAuthenticatedUser().RequireRole("Users"));
-//var appPolicy = options.GetPolicy("AppUser");
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AppUser", policy => policy.RequireAuthenticatedUser().RequireRole("Users"));
+    var appPolicy = options.GetPolicy("AppUser");
 
-//if (appPolicy is not null)
-//{
-//    options.DefaultPolicy = appPolicy;
-//    options.FallbackPolicy = appPolicy;
-//}
-//});
+    if (appPolicy is not null)
+    {
+        options.DefaultPolicy = appPolicy;
+        options.FallbackPolicy = appPolicy;
+    }
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -49,6 +49,7 @@ if (!app.Environment.IsDevelopment())
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+    app.UseFileServer(new FileServerOptions { StaticFileOptions = { ServeUnknownFileTypes = true } });
 }
 
 app.UseCors(builder =>
@@ -57,8 +58,8 @@ app.UseCors(builder =>
     .AllowAnyHeader()
     .AllowAnyMethod());
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseStaticFiles();
 
