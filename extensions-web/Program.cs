@@ -24,21 +24,21 @@ builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
 builder.Services.AddSingleton<IPackageReader, PackageReader>();
 builder.Services.AddTransient<IDatabaseService, DatabaseService>();
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+//builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
-// Add services to the container.
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AppUser", policy => policy.RequireAuthenticatedUser().RequireRole("Users"));
-    var appPolicy = options.GetPolicy("AppUser");
+////Add services to the container.
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("AppUser", policy => policy.RequireAuthenticatedUser().RequireRole("Users"));
+//var appPolicy = options.GetPolicy("AppUser");
 
-    if (appPolicy is not null)
-    {
-        options.DefaultPolicy = appPolicy;
-        options.FallbackPolicy = appPolicy;
-    }
-});
+//if (appPolicy is not null)
+//{
+//    options.DefaultPolicy = appPolicy;
+//    options.FallbackPolicy = appPolicy;
+//}
+//});
 
 builder.Services.AddControllersWithViews();
 
@@ -57,10 +57,10 @@ app.UseCors(builder =>
     .AllowAnyHeader()
     .AllowAnyMethod());
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseRouting();
