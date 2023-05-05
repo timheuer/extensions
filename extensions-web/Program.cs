@@ -60,7 +60,7 @@ app.UseCors(builder =>
 //app.UseAuthentication();
 //app.UseAuthorization();
 
-//app.UseStaticFiles();
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseRouting();
